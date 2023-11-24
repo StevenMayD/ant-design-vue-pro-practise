@@ -3,21 +3,26 @@
     <!-- 设置header高度 -->
     <a-layout-header
       style="
-        background: #141414;
+        display: flex;
+        align-items: center;
         height: 48px;
-        padding: 0px;
-        vertical-align: middle;
+        padding-left: 14px;
       "
     >
       <div class="logo">
         <!-- 将svg作为字符串，来使用图片资源 -->
-        <img
-          :src="antdesign"
-          alt=""
-          style="padding-top: 8px; padding-left: 14px; vertical-align: top"
-        />
+        <img :src="antdesign" />
         <!-- css样式 -->
-        <span style="color: #fff; padding: 10px; vertical-align: middle">
+        <span
+          style="
+            color: #fff;
+            font-size: large;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+          "
+        >
           Ant Design Pro
         </span>
       </div>
@@ -119,9 +124,8 @@ export default defineComponent({
 <style>
 .logo {
   height: 48px;
-  /* margin: 0px; */
-  padding-top: 0px;
-  /* background: rgba(255, 255, 255, 0.3); */
+  display: flex;
+  align-items: center;
   background: #141414;
 }
 
