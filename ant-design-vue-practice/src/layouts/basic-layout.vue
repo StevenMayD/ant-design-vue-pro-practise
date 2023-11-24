@@ -29,59 +29,40 @@
     </a-layout-header>
     <a-layout>
       <a-layout-sider v-model:collapsed="collapsed" theme="light" collapsible>
-        <a-menu v-model:selectedKeys="selectedKeys" theme="light" mode="inline">
-          <a-sub-menu key="sub1">
+        <a-menu
+          v-model:selectedKeys="selectedKeys"
+          v-for="(data, index) in menuData"
+          v-bind:key="index"
+          theme="light"
+          mode="inline"
+        >
+          <a-sub-menu v-bind:key="data.key">
             <template #title>
               <span>
-                <DashboardOutlined />
-                <span>仪表盘</span>
+                <!-- {{ data.icon }} -->
+                <span>{{ data.subMenu }}</span>
               </span>
             </template>
-            <a-menu-item key="1">分析页</a-menu-item>
-            <a-menu-item key="2">监控页</a-menu-item>
+            <!-- 数组数据的加载方式都是v-for -->
+            <a-menu-item
+              v-for="itemData in data.menuItems"
+              v-bind:key="itemData.key"
+              v-show="itemData == null"
+            >
+              {{ itemData.itemName }}
+            </a-menu-item>
           </a-sub-menu>
-          <a-sub-menu key="sub2">
-            <template #title>
-              <span>
-                <FormOutlined />
-                <span>表单</span>
-              </span>
-            </template>
-            <a-menu-item key="3">基础表单</a-menu-item>
-            <a-menu-item key="4">分布表单</a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub3">
-            <template #title>
-              <span>
-                <TableOutlined />
-                <span>列表</span>
-              </span>
-            </template>
-            <a-menu-item key="5">搜索列表</a-menu-item>
-            <a-menu-item key="6">查询表格</a-menu-item>
-            <a-menu-item key="7">标准列表</a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub4">
-            <template #title>
-              <span>
-                <team-outlined />
-                <span>详情页</span>
-              </span>
-            </template>
-            <a-menu-item key="8">基础详情页</a-menu-item>
-            <a-menu-item key="9">高级详情页</a-menu-item>
-          </a-sub-menu>
-          <a-menu-item key="10">
-            <file-outlined />
-            <span>结果页</span>
-          </a-menu-item>
         </a-menu>
       </a-layout-sider>
       <a-layout>
         <a-layout-content style="margin: 0 16px">
           <a-breadcrumb style="margin: 16px 0">
-            <a-breadcrumb-item>User</a-breadcrumb-item>
-            <a-breadcrumb-item>Bill</a-breadcrumb-item>
+            <a-breadcrumb-item
+              v-for="(data, index) in breadcumbData"
+              :key="index"
+            >
+              {{ data }}
+            </a-breadcrumb-item>
           </a-breadcrumb>
           <div style="padding: 24px; background: #fff; min-height: 360px">
             Bill is a cat.
@@ -105,18 +86,58 @@ import {
 import { defineComponent, ref } from "vue";
 import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来使用图片资源
 export default defineComponent({
-  components: {
-    DashboardOutlined,
-    FormOutlined,
-    TableOutlined,
-    TeamOutlined,
-    FileOutlined,
-  },
+  components: {},
   data() {
     return {
       collapsed: ref(false),
       selectedKeys: ref(["1"]),
       antdesign,
+      breadcumbData: ref(["仪表盘", "分析页"]),
+      menuData: ref([
+        {
+          subMenu: "仪表盘",
+          key: "sub1",
+          icon: DashboardOutlined,
+          menuItems: [
+            { itemName: "分析页", key: "1" },
+            { itemName: "监控页", key: "2" },
+          ],
+        },
+        {
+          subMenu: "表单页",
+          key: "sub2",
+          icon: FormOutlined,
+          menuItems: [
+            { itemName: "基础表单", key: "3" },
+            { itemName: "分布表单", key: "4" },
+          ],
+        },
+        {
+          subMenu: "列表页",
+          key: "sub3",
+          icon: TableOutlined,
+          menuItems: [
+            { itemName: "搜索列表", key: "5" },
+            { itemName: "查询表格", key: "6" },
+            { itemName: "标准列表", key: "7" },
+          ],
+        },
+        {
+          subMenu: "详情页",
+          key: "sub4",
+          icon: TeamOutlined,
+          menuItems: [
+            { itemName: "基础详情页", key: "8" },
+            { itemName: "高级详情页", key: "9" },
+          ],
+        },
+        {
+          subMenu: "结果页",
+          key: "10",
+          icon: FileOutlined,
+          menuItems: [],
+        },
+      ]),
     };
   },
 });
