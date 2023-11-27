@@ -30,16 +30,18 @@
     <a-layout>
       <a-layout-sider v-model:collapsed="collapsed" theme="light" collapsible>
         <a-menu
-          v-model:selectedKeys="selectedKeys"
+          v-model:selectedKeys="menuSelectedKeys"
           v-for="(data, index) in menuData"
           v-bind:key="index"
           theme="light"
           mode="inline"
+          @select="handleMenuSelect"
         >
           <a-sub-menu v-bind:key="data.key">
             <template #title>
               <span>
-                <!-- {{ data.icon }} -->
+                <!-- 动态配置图标组件使用 component，不能直接使用 <DashboardOutlined /> -->
+                <component :is="data.icon" />
                 <span>{{ data.subMenu }}</span>
               </span>
             </template>
@@ -47,7 +49,6 @@
             <a-menu-item
               v-for="itemData in data.menuItems"
               v-bind:key="itemData.key"
-              v-show="itemData == null"
             >
               {{ itemData.itemName }}
             </a-menu-item>
@@ -86,18 +87,25 @@ import {
 import { defineComponent, ref } from "vue";
 import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来使用图片资源
 export default defineComponent({
-  components: {},
+  // 使用图标组件
+  components: {
+    DashboardOutlined,
+    FormOutlined,
+    TableOutlined,
+    TeamOutlined,
+    FileOutlined,
+  },
   data() {
     return {
       collapsed: ref(false),
-      selectedKeys: ref(["1"]),
+      menuSelectedKeys: ref(["1"]), // 设置菜单默认选中项的key
       antdesign,
       breadcumbData: ref(["仪表盘", "分析页"]),
       menuData: ref([
         {
           subMenu: "仪表盘",
           key: "sub1",
-          icon: DashboardOutlined,
+          icon: "DashboardOutlined", // mock数据中加入图标
           menuItems: [
             { itemName: "分析页", key: "1" },
             { itemName: "监控页", key: "2" },
@@ -106,7 +114,7 @@ export default defineComponent({
         {
           subMenu: "表单页",
           key: "sub2",
-          icon: FormOutlined,
+          icon: "FormOutlined",
           menuItems: [
             { itemName: "基础表单", key: "3" },
             { itemName: "分布表单", key: "4" },
@@ -115,7 +123,7 @@ export default defineComponent({
         {
           subMenu: "列表页",
           key: "sub3",
-          icon: TableOutlined,
+          icon: "TableOutlined",
           menuItems: [
             { itemName: "搜索列表", key: "5" },
             { itemName: "查询表格", key: "6" },
@@ -125,7 +133,7 @@ export default defineComponent({
         {
           subMenu: "详情页",
           key: "sub4",
-          icon: TeamOutlined,
+          icon: "TeamOutlined",
           menuItems: [
             { itemName: "基础详情页", key: "8" },
             { itemName: "高级详情页", key: "9" },
@@ -134,11 +142,39 @@ export default defineComponent({
         {
           subMenu: "结果页",
           key: "10",
-          icon: FileOutlined,
+          icon: "FileOutlined",
           menuItems: [],
         },
       ]),
     };
+  },
+  methods: {
+    // menu菜单点击事件
+    handleMenuSelect({ keyPath }) {
+      console.log("Clicked menu item key:", keyPath);
+      /*
+      [
+        "sub3",
+        "6"
+      ]
+      */
+      // 点击菜单，调整面包屑的内容：找到menuData中的keyPath的数据，拼凑到breadcumbData中
+      this.breadcumbData = [];
+      for (const key in keyPath) {
+        for (const item in this.menuData) {
+          if (keyPath[key] == this.menuData[item].key) {
+            this.breadcumbData.push(this.menuData[item].subMenu);
+          }
+          for (const menuItem in this.menuData[item].menuItems) {
+            if (keyPath[key] == this.menuData[item].menuItems[menuItem].key) {
+              this.breadcumbData.push(
+                this.menuData[item].menuItems[menuItem].itemName
+              );
+            }
+          }
+        }
+      }
+    },
   },
 });
 </script>
