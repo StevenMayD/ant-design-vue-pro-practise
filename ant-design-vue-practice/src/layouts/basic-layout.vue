@@ -66,7 +66,7 @@
             </a-breadcrumb-item>
           </a-breadcrumb>
           <div style="padding: 24px; background: #fff; min-height: 360px">
-            Bill is a cat.
+            {{ mainContent }}
           </div>
         </a-layout-content>
         <a-layout-footer style="text-align: center">
@@ -86,6 +86,7 @@ import {
 } from "@ant-design/icons-vue";
 import { defineComponent, ref } from "vue";
 import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来使用图片资源
+import smdRequest from "../utils/request"; // 接口请求
 export default defineComponent({
   // 使用图标组件
   components: {
@@ -99,6 +100,7 @@ export default defineComponent({
     return {
       collapsed: ref(false),
       menuSelectedKeys: ref(["1"]), // 设置菜单默认选中项的key
+      mainContent: "主体内容",
       antdesign,
       breadcumbData: ref(["仪表盘", "分析页"]),
       menuData: ref([
@@ -148,6 +150,13 @@ export default defineComponent({
       ]),
     };
   },
+  /*
+  mounted 是 Vue 组件生命周期钩子函数之一，用于表示 Vue 实例已经被挂载到 DOM 上后会执行的操作。
+  */
+  mounted() {
+    // 请求数据
+    this.getMainContent();
+  },
   methods: {
     // menu菜单点击事件
     handleMenuSelect({ keyPath }) {
@@ -174,6 +183,17 @@ export default defineComponent({
           }
         }
       }
+    },
+    // 页面主体内容请求
+    getMainContent() {
+      smdRequest({
+        url: "/customize-api/v3/date/is_work",
+        method: "get",
+        params: {},
+      }).then((response) => {
+        var responseData = response.data;
+        this.mainContent = responseData.data;
+      });
     },
   },
 });
