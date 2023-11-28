@@ -84,82 +84,95 @@ import {
   TeamOutlined,
   FileOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, toRefs, ref, onMounted } from "vue";
 import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来使用图片资源
 import smdRequest from "../utils/request"; // 接口请求
 export default defineComponent({
-  // 使用图标组件
+  /* 组件 */
   components: {
-    DashboardOutlined,
+    DashboardOutlined, // 使用图标组件
     FormOutlined,
     TableOutlined,
     TeamOutlined,
     FileOutlined,
   },
-  data() {
-    return {
-      collapsed: ref(false),
-      menuSelectedKeys: ref(["1"]), // 设置菜单默认选中项的key
+  /* props，接受外界数据：当外界的父组件的属性值发生变化时，这里子组件数据会相应更新 */
+  props: {
+    menuList: {
+      type: Array,
+      required: true, // 必须传值
+      // 默认值
+      default: () => {
+        return [
+          {
+            subMenu: "仪表盘",
+            key: "sub1",
+            icon: "DashboardOutlined", // mock数据中加入图标
+            menuItems: [
+              { itemName: "分析页", key: "1" },
+              { itemName: "监控页", key: "2" },
+            ],
+          },
+          {
+            subMenu: "表单页",
+            key: "sub2",
+            icon: "FormOutlined",
+            menuItems: [
+              { itemName: "基础表单", key: "3" },
+              { itemName: "分布表单", key: "4" },
+            ],
+          },
+          {
+            subMenu: "列表页",
+            key: "sub3",
+            icon: "TableOutlined",
+            menuItems: [
+              { itemName: "搜索列表", key: "5" },
+              { itemName: "查询表格", key: "6" },
+              { itemName: "标准列表", key: "7" },
+            ],
+          },
+          {
+            subMenu: "详情页",
+            key: "sub4",
+            icon: "TeamOutlined",
+            menuItems: [
+              { itemName: "基础详情页", key: "8" },
+              { itemName: "高级详情页", key: "9" },
+            ],
+          },
+          {
+            subMenu: "结果页",
+            key: "10",
+            icon: "FileOutlined",
+            menuItems: [],
+          },
+        ];
+      },
+    },
+  },
+  /* 设置组件的初始状态  setup(props, { emit }){} */
+  setup(props) {
+    /* Setup的状态State：是组件内部私有的状态，可以用ref、reactive函数创建响应式变量
+    ref和reactive 一样都是实现响应式数据的方法（ref针对基本数据类型，reactive用于对象数据类型）
+    */
+    const state = reactive({
+      collapsed: false,
+      menuSelectedKeys: ["1"], // 设置菜单默认选中项的key
+      breadcumbData: ["仪表盘", "分析页"],
       mainContent: "主体内容",
       antdesign,
-      breadcumbData: ref(["仪表盘", "分析页"]),
-      menuData: ref([
-        {
-          subMenu: "仪表盘",
-          key: "sub1",
-          icon: "DashboardOutlined", // mock数据中加入图标
-          menuItems: [
-            { itemName: "分析页", key: "1" },
-            { itemName: "监控页", key: "2" },
-          ],
-        },
-        {
-          subMenu: "表单页",
-          key: "sub2",
-          icon: "FormOutlined",
-          menuItems: [
-            { itemName: "基础表单", key: "3" },
-            { itemName: "分布表单", key: "4" },
-          ],
-        },
-        {
-          subMenu: "列表页",
-          key: "sub3",
-          icon: "TableOutlined",
-          menuItems: [
-            { itemName: "搜索列表", key: "5" },
-            { itemName: "查询表格", key: "6" },
-            { itemName: "标准列表", key: "7" },
-          ],
-        },
-        {
-          subMenu: "详情页",
-          key: "sub4",
-          icon: "TeamOutlined",
-          menuItems: [
-            { itemName: "基础详情页", key: "8" },
-            { itemName: "高级详情页", key: "9" },
-          ],
-        },
-        {
-          subMenu: "结果页",
-          key: "10",
-          icon: "FileOutlined",
-          menuItems: [],
-        },
-      ]),
-    };
-  },
-  /*
-  mounted 是 Vue 组件生命周期钩子函数之一，用于表示 Vue 实例已经被挂载到 DOM 上后会执行的操作。
-  */
-  mounted() {
-    // 请求数据
-    this.getMainContent();
-  },
-  methods: {
+      menuData: ref(props.menuList),
+    });
+    /*  onMounted，在Vue实例已经被挂载到DOM上后会执行的操作 */
+    onMounted(() => {
+      // 请求数据
+      getMainContent();
+    });
+
+    /* 自定义的方法（包括antdesign的组件方法和自定义方法） */
     // menu菜单点击事件
-    handleMenuSelect({ keyPath }) {
+    const handleMenuSelect = ({ keyPath }) => {
       console.log("Clicked menu item key:", keyPath);
       /*
       [
@@ -168,33 +181,40 @@ export default defineComponent({
       ]
       */
       // 点击菜单，调整面包屑的内容：找到menuData中的keyPath的数据，拼凑到breadcumbData中
-      this.breadcumbData = [];
+      state.breadcumbData = [];
       for (const key in keyPath) {
-        for (const item in this.menuData) {
-          if (keyPath[key] == this.menuData[item].key) {
-            this.breadcumbData.push(this.menuData[item].subMenu);
+        for (const item in state.menuData) {
+          if (keyPath[key] == state.menuData[item].key) {
+            state.breadcumbData.push(state.menuData[item].subMenu);
           }
-          for (const menuItem in this.menuData[item].menuItems) {
-            if (keyPath[key] == this.menuData[item].menuItems[menuItem].key) {
-              this.breadcumbData.push(
-                this.menuData[item].menuItems[menuItem].itemName
+          for (const menuItem in state.menuData[item].menuItems) {
+            if (keyPath[key] == state.menuData[item].menuItems[menuItem].key) {
+              state.breadcumbData.push(
+                state.menuData[item].menuItems[menuItem].itemName
               );
             }
           }
         }
       }
-    },
+    };
     // 页面主体内容请求
-    getMainContent() {
+    const getMainContent = () => {
       smdRequest({
         url: "/customize-api/v3/date/is_work",
         method: "get",
         params: {},
       }).then((response) => {
         var responseData = response.data;
-        this.mainContent = responseData.data;
+        state.mainContent = responseData.data;
       });
-    },
+    };
+
+    /* setup()函数需要返回一个对象这个对象包含了组件中需要在模板中使用的属性方法等 */
+    return {
+      ...toRefs(state),
+      handleMenuSelect,
+      getMainContent,
+    };
   },
 });
 </script>
