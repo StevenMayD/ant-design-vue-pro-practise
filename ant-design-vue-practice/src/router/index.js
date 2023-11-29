@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import BasicLayout from "../layouts/basic-layout.vue";
+import LoginVC from "../views/main/dashboard/LoginVC.vue";
 
 const routes = [
   {
@@ -7,6 +8,13 @@ const routes = [
     path: "/",
     name: "BasicLayout",
     component: BasicLayout,
+    children: [
+      {
+        path: "/login",
+        name: "LoginVC",
+        component: LoginVC,
+      },
+    ],
   },
 ];
 

@@ -80,9 +80,13 @@
             <br />
             来自computed计算属性:
             <br />{{ computedData }}<br /><br />
-            来自watch监听器：
+            来自watch监听器:
             <br />{{ watchData }}
           </div>
+          <!-- 注意不是 @clicked -->
+          <a-button type="primary" @click="loginClick">登录</a-button>
+          <!-- 路由占位符: 用于加载子页面 -->
+          <router-view />
         </a-layout-content>
         <a-layout-footer style="text-align: center">
           Ant Design ©2018 Created by Ant UED
@@ -100,6 +104,7 @@ import {
   FileOutlined,
 } from "@ant-design/icons-vue";
 import { defineComponent, reactive, toRefs, ref, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router"; // 获取路由 与 路由跳转
 import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来使用图片资源
 import smdRequest from "../utils/request"; // 接口请求
 import { computed } from "@vue/reactivity";
@@ -180,6 +185,8 @@ export default defineComponent({
       antdesign,
       menuData: ref(props.menuList),
     });
+    const route = useRoute(); // 获取路由
+    const router = useRouter(); // 路由跳转
     var titleContent = ref("标题内容");
 
     /* computed：计算属性, 根据依赖的响应式数据动态计算出一个新的值
@@ -246,6 +253,10 @@ export default defineComponent({
       });
     };
 
+    const loginClick = () => {
+      router.push({ path: "/login", query: { ...route.query } });
+    };
+
     /* setup()函数需要返回一个对象这个对象包含了组件中需要在模板中使用的属性方法等 */
     return {
       ...toRefs(state),
@@ -254,6 +265,7 @@ export default defineComponent({
       titleContent,
       computedData,
       watchData,
+      loginClick,
     };
   },
 });
