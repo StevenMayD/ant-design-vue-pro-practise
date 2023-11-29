@@ -77,6 +77,11 @@
               <!-- 双向数据绑定(使用的数据mainContent本身又是响应式数据) -->
               <a-input v-model:value="mainContent"></a-input>
             </div>
+            <br />
+            来自computed计算属性:
+            <br />{{ computedData }}<br /><br />
+            来自watch监听器：
+            <br />{{ watchData }}
           </div>
         </a-layout-content>
         <a-layout-footer style="text-align: center">
@@ -94,9 +99,10 @@ import {
   TeamOutlined,
   FileOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, reactive, toRefs, ref, onMounted } from "vue";
+import { defineComponent, reactive, toRefs, ref, onMounted, watch } from "vue";
 import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来使用图片资源
 import smdRequest from "../utils/request"; // 接口请求
+import { computed } from "@vue/reactivity";
 export default defineComponent({
   /* 组件 */
   components: {
@@ -175,6 +181,25 @@ export default defineComponent({
       menuData: ref(props.menuList),
     });
     var titleContent = ref("标题内容");
+
+    /* computed：计算属性, 根据依赖的响应式数据动态计算出一个新的值
+    由于computedData本身不是响应式数据，不会随着titleConten和mainContent的变化而变化
+    */
+    // const computedData = titleContent.value + "-" + state.mainContent;
+    const computedData = computed(() => {
+      return titleContent.value + " ----- " + state.mainContent;
+    });
+
+    /* watch：监听器，用于观察特定的响应式数据，在监测到变化时，执行自定义的操作 
+    由于一般情况下，响应式数据才会发生变化，所以watch用于监听响应式数据
+    监听的是titleContent数据，watchData是自定义的操作，用于界面展示
+    */
+    var watchData = ref("");
+    watch(titleContent, (newValue, oldValue) => {
+      console.log(`titleContent从 ${oldValue} 变成了 ${newValue}`);
+      watchData.value = `titleContent从 ${oldValue} 变成了 ${newValue}`;
+    });
+
     /*  onMounted，在Vue实例已经被挂载到DOM上后会执行的操作 */
     onMounted(() => {
       // 请求数据
@@ -227,6 +252,8 @@ export default defineComponent({
       handleMenuSelect,
       getMainContent,
       titleContent,
+      computedData,
+      watchData,
     };
   },
 });
