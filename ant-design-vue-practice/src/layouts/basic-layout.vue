@@ -66,7 +66,17 @@
             </a-breadcrumb-item>
           </a-breadcrumb>
           <div style="padding: 24px; background: #fff; min-height: 360px">
-            {{ mainContent }}
+            标题内容,使用ref()进行响应式数据:{{ titleContent }}
+            <div>
+              <!-- 双向数据绑定(使用的数据mainContent本身又是响应式数据) -->
+              <a-input v-model:value="titleContent"></a-input>
+            </div>
+            <br />
+            主体内容,使用state进行响应式数据:{{ mainContent }}
+            <div>
+              <!-- 双向数据绑定(使用的数据mainContent本身又是响应式数据) -->
+              <a-input v-model:value="mainContent"></a-input>
+            </div>
           </div>
         </a-layout-content>
         <a-layout-footer style="text-align: center">
@@ -164,6 +174,7 @@ export default defineComponent({
       antdesign,
       menuData: ref(props.menuList),
     });
+    var titleContent = ref("标题内容");
     /*  onMounted，在Vue实例已经被挂载到DOM上后会执行的操作 */
     onMounted(() => {
       // 请求数据
@@ -205,7 +216,8 @@ export default defineComponent({
         params: {},
       }).then((response) => {
         var responseData = response.data;
-        state.mainContent = responseData.data;
+        state.mainContent = JSON.stringify(responseData.data); // 需要 state.
+        titleContent.value = responseData.data.current; // 需要 .value
       });
     };
 
@@ -214,6 +226,7 @@ export default defineComponent({
       ...toRefs(state),
       handleMenuSelect,
       getMainContent,
+      titleContent,
     };
   },
 });

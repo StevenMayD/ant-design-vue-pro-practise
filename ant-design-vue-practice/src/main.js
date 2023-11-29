@@ -5,7 +5,7 @@ import router from "./router";
 import store from "./store";
 
 import "ant-design-vue/dist/antd.css";
-import { Layout, Menu, SubMenu, Breadcrumb } from "ant-design-vue";
+import { Layout, Menu, SubMenu, Breadcrumb, Input } from "ant-design-vue";
 
 createApp(App)
   .use(store)
@@ -14,4 +14,5 @@ createApp(App)
   .use(Menu)
   .use(SubMenu)
   .use(Breadcrumb)
+  .use(Input)
   .mount("#app");
