@@ -12,6 +12,8 @@ import {
   Breadcrumb,
   Input,
   Button,
+  Form,
+  Checkbox,
 } from "ant-design-vue";
 
 createApp(App)
@@ -23,4 +25,6 @@ createApp(App)
   .use(Breadcrumb)
   .use(Input)
   .use(Button)
+  .use(Form)
+  .use(Checkbox)
   .mount("#app");
