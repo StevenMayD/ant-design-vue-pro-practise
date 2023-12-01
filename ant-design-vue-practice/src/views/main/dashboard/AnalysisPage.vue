@@ -19,10 +19,22 @@
   </div>
   <!-- 注意不是 @clicked -->
   <a-button type="primary" @click="modalClick">对话框</a-button>
+  <a-button type="primary" @click="addSubComponentPage">
+    展示子组件页面
+  </a-button>
+  <!-- 封装子组件页面
+    父组件调用子组件的方法需要使用 ref 引用子组件
+    通过子组件的props，父组件对其进行传参，参数名options
+    接收子组件的回调SubComponentPagecCnfirm，回调方法是 SubComponentPageCallback
+  -->
+  <SubComponentPage
+    ref="SubComponentPageRef"
+    :options="optionsValue"
+    @SubComponentPagecCnfirm="SubComponentPageCallback"
+  />
   <a-modal
     :visible="visibleModal"
     :title="titleContent"
-    ok
     @ok="handleOK"
     @cancel="handleCancel"
     cancelText="取消啦"
@@ -38,9 +50,12 @@ import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来�
 import smdRequest from "../../../utils/request"; // 接口请求
 import { computed } from "@vue/reactivity";
 import store from "@/store";
+import SubComponentPage from "../dashboard/SubComponentPage.vue";
 export default defineComponent({
   /* 组件 */
-  components: {},
+  components: {
+    SubComponentPage,
+  },
   /* props，接受外界数据：当外界的父组件的属性值发生变化时，这里子组件数据会相应更新 */
   props: {},
   /* 设置组件的初始状态  setup(props, { emit }){} */
@@ -53,8 +68,10 @@ export default defineComponent({
       antdesign,
       menuData: ref(props.menuList),
       visibleModal: false,
+      optionsValue: "来自父页面的传值111",
     });
     var titleContent = ref("标题内容");
+    const SubComponentPageRef = ref(null); // 使用ref引用子组件，父组件就可以调用子组件的方法
 
     /* computed：计算属性, 根据依赖的响应式数据动态计算出一个新的值
     由于computedData本身不是响应式数据，不会随着titleConten和mainContent的变化而变化
@@ -106,7 +123,17 @@ export default defineComponent({
     const handleCancel = () => {
       state.visibleModal = false;
     };
-
+    // 展示子组件页面：通过调用子组件的doShow，让其显示并传值
+    const addSubComponentPage = () => {
+      /* 在Vue3中，父组件调用子组件的方法需要使用 ref 引用子组件，
+      并使用 .value 访问子组件实例来调用其方法，并传参
+      */
+      SubComponentPageRef.value.doShow("来自父页面的传值222");
+    };
+    // 子组件页面回调数据
+    const SubComponentPageCallback = (value) => {
+      state.mainContent = value;
+    };
     /* setup()函数需要返回一个对象这个对象包含了组件中需要在模板中使用的属性方法等 */
     return {
       ...toRefs(state),
@@ -117,6 +144,9 @@ export default defineComponent({
       modalClick,
       handleOK,
       handleCancel,
+      addSubComponentPage,
+      SubComponentPageRef,
+      SubComponentPageCallback,
     };
   },
 });

@@ -162,7 +162,6 @@ export default defineComponent({
       breadcumbData: ["仪表盘", "分析页"],
       antdesign,
       menuData: ref(props.menuList),
-      visibleModal: false,
     });
     const route = useRoute(); // 获取路由
     const router = useRouter(); // 路由跳转
@@ -214,25 +213,12 @@ export default defineComponent({
           break;
       }
     };
-    // 点击对话框
-    const modalClick = () => {
-      state.visibleModal = true;
-    };
-    // 对话框点击确定
-    const handleOK = () => {
-      state.visibleModal = false;
-    };
-    // 对话框点击取消/叉叉
-    const handleCancel = () => {
-      state.visibleModal = false;
-    };
 
     /* setup()函数需要返回一个对象这个对象包含了组件中需要在模板中使用的属性方法等 */
     return {
       ...toRefs(state),
       handleMenuSelect,
       titleContent,
-      modalClick,
       handleOK,
       handleCancel,
     };
