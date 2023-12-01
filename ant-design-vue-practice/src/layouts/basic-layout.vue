@@ -85,6 +85,16 @@
           </div>
           <!-- 注意不是 @clicked -->
           <a-button type="primary" @click="loginClick">登录</a-button>
+          <a-button type="primary" @click="modalClick">对话框</a-button>
+          <a-modal
+            :visible="visibleModal"
+            title="基本弹窗"
+            @ok="handleOK"
+            @cancel="handleCancel"
+            width="600px"
+          >
+            <p>some</p>
+          </a-modal>
           <!-- 路由占位符: 用于加载子页面 -->
           <router-view />
         </a-layout-content>
@@ -184,6 +194,7 @@ export default defineComponent({
       mainContent: "主体内容",
       antdesign,
       menuData: ref(props.menuList),
+      visibleModal: false,
     });
     const route = useRoute(); // 获取路由
     const router = useRouter(); // 路由跳转
@@ -252,9 +263,21 @@ export default defineComponent({
         titleContent.value = responseData.data.current; // 需要 .value
       });
     };
-
+    // 点击登录
     const loginClick = () => {
       router.push({ path: "/login", query: { ...route.query } });
+    };
+    // 点击对话框
+    const modalClick = () => {
+      state.visibleModal = true;
+    };
+    // 对话框点击确定
+    const handleOK = () => {
+      state.visibleModal = false;
+    };
+    // 对话框点击取消/叉叉
+    const handleCancel = () => {
+      state.visibleModal = false;
     };
 
     /* setup()函数需要返回一个对象这个对象包含了组件中需要在模板中使用的属性方法等 */
@@ -266,6 +289,9 @@ export default defineComponent({
       computedData,
       watchData,
       loginClick,
+      modalClick,
+      handleOK,
+      handleCancel,
     };
   },
 });

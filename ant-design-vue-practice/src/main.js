@@ -14,6 +14,7 @@ import {
   Button,
   Form,
   Checkbox,
+  Modal,
 } from "ant-design-vue";
 
 createApp(App)
@@ -27,4 +28,5 @@ createApp(App)
   .use(Button)
   .use(Form)
   .use(Checkbox)
+  .use(Modal)
   .mount("#app");
