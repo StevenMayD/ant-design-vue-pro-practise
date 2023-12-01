@@ -37,6 +37,7 @@ import { defineComponent, reactive, toRefs, ref, onMounted, watch } from "vue";
 import antdesign from "@/assets/antdesign.svg"; // 将svg作为字符串，来使用图片资源
 import smdRequest from "../../../utils/request"; // 接口请求
 import { computed } from "@vue/reactivity";
+import store from "@/store";
 export default defineComponent({
   /* 组件 */
   components: {},
@@ -89,6 +90,8 @@ export default defineComponent({
         var responseData = response.data;
         state.mainContent = JSON.stringify(responseData.data); // 需要 state.
         titleContent.value = responseData.data.current; // 需要 .value
+        /* store：全局保存数据，进行没有直接关系的界面见传值，类似NSUserDefault */
+        store.state.titleGlobal = titleContent.value; //
       });
     };
     // 点击对话框

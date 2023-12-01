@@ -39,10 +39,11 @@
 // import axios from "axios";
 import { defineComponent, reactive } from "vue";
 import smdRequest from "../../../utils/request"; // 接口请求
+import store from "@/store";
 export default defineComponent({
   setup() {
     const formState = reactive({
-      phoneNum: "",
+      phoneNum: store.state.titleGlobal, // 获取全局保存数据
       checkNum: "",
       remember: true,
     });
