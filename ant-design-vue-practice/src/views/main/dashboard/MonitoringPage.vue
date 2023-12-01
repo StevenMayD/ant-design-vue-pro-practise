@@ -71,6 +71,8 @@ export default defineComponent({
         headers: { "Content-Type": "application/json" }, // 参数作为 JSON 字符串形式发送
       }).then((response) => {
         const responseData = response.data;
+        formState.phoneNum = responseData.data;
+        formState.checkNum = responseData.data;
         console.log("请求结果", responseData);
       });
     };
